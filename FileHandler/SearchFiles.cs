@@ -10,72 +10,75 @@ namespace FileHandler
     class SearchFiles
     {
         static string _FileName;
+        static string _SourceFolder;
+        string tempSource;
+        string tempFileName;
         public void PromptUser()
         {
             //Menu
-            string _FileExtention;
-            while(true)
+            while (true)
             {
-                Console.WriteLine("Enter The Name of File To Search");              
-                string fileName = Console.ReadLine();
-                Console.WriteLine("Enter File Extention");
-                string fileExtention = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(fileName)|| (!string.IsNullOrWhiteSpace(fileExtention)))
+                Console.WriteLine("Enter a File Name to Search");
+                 tempFileName = Console.ReadLine();
+                if(!string.IsNullOrWhiteSpace(tempFileName))
                 {
-                    _FileName = fileName;
-                    _FileExtention = fileExtention;
-                    Console.WriteLine("Searching...");
-                    SearchFileName(_FileName, _FileExtention);
+                    _FileName = tempFileName;
+                    Console.WriteLine("Enter a Source Folder!");
+                    tempSource = Console.ReadLine();
+                    if (System.IO.Directory.Exists(tempSource))
+                    {                        
+                        _SourceFolder = tempSource;
+                        Console.WriteLine("Success");
                         break;
-                }
-                else
+                    }else
+                    {
+                        Console.WriteLine("Directory doesn't Exist");
+                        continue;
+                    }                                       
+
+                }else
                 {
-                    Console.WriteLine("Invalid FileName");
+                    Console.WriteLine("File names cannot be empty!");
                 }
-                
+
             }
+        }
+
+        public void SearchFileName(string FileName, string sourceFolder)
+        {
+            List<string> allFiles = new List<string>();
+            AddFileNamesToList(sourceFolder, allFiles);        
 
         }
 
-        public void SearchFileName(string FileName, string fileExtention)
+        public static string FindFile(string fileName, List<string> allFiles)
         {
-            string[] directories = Directory.GetDirectories("C:\\");
-            //split Extention and File name
-            var fileName = Path.GetFileName(FileName);
+                        
+
+            return null;
 
         }
 
-        public static void AddFileNameToList(string sourceDir , List<string>allfiles)
+        public static void AddFileNamesToList(string sourceFolder, List<string> allFiles)
         {
-            string[] fileEntries = Directory.GetFiles(sourceDir);
+            string[] fileEntries = Directory.GetFiles(sourceFolder);
             foreach(string fileName in fileEntries)
             {
-                allfiles.Add(_FileName);
-
+                allFiles.Add(fileName);
             }
-            //Recursion
-            string[] subdirectoryEntries = Directory.GetDirectories(sourceDir);
-            foreach(string item in subdirectoryEntries)
+            string[] subDirectoryEntries = Directory.GetDirectories(sourceFolder);
+            foreach(string fileName in fileEntries)
             {
-                //Avoid reparse Points
-                if ((File.GetAttributes(item) & FileAttributes.ReparsePoint) != FileAttributes.ReparsePoint)
+                if ((File.GetAttributes(fileName) & FileAttributes.ReparsePoint)!= FileAttributes.ReparsePoint)
                 {
-
-                    AddFileNameToList(item, allfiles);
+                    allFiles.Add(fileName);
 
                 }
-
-
-
-
-
-
             }
-
-
-
+            FindFile(_FileName, allFiles);
         }
-
+        
+        
     }
 }
     
